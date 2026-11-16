@@ -44,10 +44,17 @@ function speak(rate=0.9){
  if(!("speechSynthesis" in window)){ $("voiceNote").textContent="此瀏覽器不支援語音播放，請使用文字跟讀。";return; }
  speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(lessons[current].sw);u.lang="sw-KE";u.rate=rate;
  const voices=speechSynthesis.getVoices();const v=voices.find(x=>x.lang.toLowerCase().startsWith("sw"));
- if(v)u.voice=v;else $("voiceNote").textContent="裝置目前沒有找到 Kiswahili 語音，將使用系統可用語音；建議日後加入肯亞母語者錄音。";
+ if(v)u.voice=v;else $("voiceNote").textContent="這台裝置沒有 Kiswahili 語音，播放的發音可能不準；請點「Google 翻譯發音」聽正確唸法。";
  speechSynthesis.speak(u);
 }
 $("playBtn").addEventListener("click",()=>speak(.9));$("slowBtn").addEventListener("click",()=>speak(.68));
+function openGoogleTranslate(text){
+ const url="https://translate.google.com/?sl=sw&tl=zh-TW&op=translate&text="+encodeURIComponent(text);
+ const w=window.open(url,"_blank","noopener");
+ if(!w)location.href=url;
+}
+$("gtBtn").addEventListener("click",()=>openGoogleTranslate(lessons[current].sw));
+$("gtReplyBtn").addEventListener("click",()=>openGoogleTranslate(lessons[current].reply));
 $("prevLesson").addEventListener("click",()=>{if(current>0){current--;renderLesson();}});
 $("nextLesson").addEventListener("click",()=>{if(current<lessons.length-1){current++;renderLesson();}});
 $("completeLesson").addEventListener("click",()=>{if(!saved.done.includes(current)){saved.done.push(current);saved.xp+=20;persist();renderLesson();}});
